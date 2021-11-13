@@ -26,6 +26,7 @@ async function run () {
         await client.connect();
         const database = client.db("woodpecker")
         const productsCollection = database.collection("products")
+        const reviewsCollection = database.collection("reviews")
 
         app.get('/products',async(req,res)=>{
             const productsData = await productsCollection.find({}).toArray();
@@ -33,10 +34,21 @@ async function run () {
             res.json(productsData);
         })
 
+        app.get('/reviews',async(req,res)=>{
+            const reviewsData = await reviewsCollection.find({}).toArray();
+            res.json(reviewsData);
+        })
+
         app.post('/products',async(req,res)=>{
             const newProduct = req.body;
             const result = await productsCollection.insertOne(newProduct)
             console.log('hitting the post',req.body)
+            res.json(result)
+        })
+
+        app.post('/reviews',async(req,res)=>{
+            const newReview = req.body;
+            const result = await reviewsCollection.insertOne(newReview)
             res.json(result)
         })
 
