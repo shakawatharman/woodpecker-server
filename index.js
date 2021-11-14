@@ -16,7 +16,7 @@ const { MongoClient } = require('mongodb');
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.a0htp.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 
-console.log(uri)
+// console.log(uri)
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -24,21 +24,13 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run () {
     try{
         await client.connect();
-        const database = client.db("woodpecker")
-        const productsCollection = database.collection("products")
-        const reviewsCollection = database.collection("reviews")
-        const usersCollection = database.collection("users")
 
-        app.get('/products',async(req,res)=>{
-            const productsData = await productsCollection.find({}).toArray();
-            console.log(productsData);
-            res.json(productsData);
-        })
+        const database = client.db("woodpecker");
+        const productsCollection = database.collection("products");
+        const reviewsCollection = database.collection("reviews");
+        const usersCollection = database.collection("users");
+        const ordersCollection = database.collection("orders");
 
-        app.get('/reviews',async(req,res)=>{
-            const reviewsData = await reviewsCollection.find({}).toArray();
-            res.json(reviewsData);
-        })
 
         app.post('/products',async(req,res)=>{
             const newProduct = req.body;
@@ -46,11 +38,11 @@ async function run () {
             console.log('hitting the post',req.body)
             res.json(result)
         })
-        app.post('/users',async(req,res)=>{
-            const newUser = req.body;
-            const result = await usersCollection.insertOne(newUser)
-            console.log('hitting the post',req.body)
-            res.json(result)
+
+        app.get('/products',async(req,res)=>{
+            const productsData = await productsCollection.find({}).toArray();
+            console.log(productsData);
+            res.json(productsData);
         })
 
         app.post('/reviews',async(req,res)=>{
@@ -58,6 +50,36 @@ async function run () {
             const result = await reviewsCollection.insertOne(newReview)
             res.json(result)
         })
+
+        app.get('/reviews',async(req,res)=>{
+            const reviewsData = await reviewsCollection.find({}).toArray();
+            res.json(reviewsData);
+        })
+
+        app.post('/users',async(req,res)=>{
+            const newUser = req.body;
+            const result = await usersCollection.insertOne(newUser)
+            console.log('hitting the post',req.body)
+            res.json(result)
+        })
+
+        app.get('/users',async(req,res)=>{
+            const usersData = await usersCollection.find({}).toArray();
+            res.json(usersData);
+        })
+        
+       app.post('/orders',async(req,res)=>{
+           const newOrder = req.body;
+           const result = await ordersCollection.insertOne(newOrder);
+            res.json(result)
+       })
+
+       app.get('/orders',async(req,res)=>{
+           const ordersData = await ordersCollection.find({}).toArray();
+           res.json(ordersData);
+       })
+
+        
 
         console.log('connected')
     }
@@ -72,7 +94,7 @@ run().catch(console.dir)
 
 app.get('/',(req,res)=>{
     console.log('server is running')
-    res.send('matha thik nai')
+    res.send('Hello People')
 })
 
 app.listen(port,()=>{
