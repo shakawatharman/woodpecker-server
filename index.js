@@ -6,6 +6,8 @@ const cors = require("cors");
 
 const port = process.env.PORT || 5000;
 
+const ObjectId = require("mongodb").ObjectId;
+
 require("dotenv").config();
 
 app.use(cors());
@@ -122,9 +124,35 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const result = await ordersCollection.deleteOne(query);
       
-            console.log("deleting user with id ", result);
+           
       
             res.json(result);
+          });
+          //delete product by
+          app.delete("/deleteProduct/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productsCollection.deleteOne(query);
+      
+           
+      
+            res.json(result);
+          });
+
+          // make an user admin and
+          app.put("/updateRole/:id", (req, res) => {
+            const id = req.params.id;
+            const updatedStatus = req.body;
+            console.log(updatedStatus);
+            const filter = { _id: ObjectId(id) };
+            console.log(updatedStatus);
+            usersCollection
+              .updateOne(filter, {
+                $set: { role: updatedStatus.role },
+              })
+              .then((result) => {
+                res.send(result);
+              });
           });
 
 
